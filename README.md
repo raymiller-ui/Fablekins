@@ -5,6 +5,7 @@ A lightweight 2D tile-based game engine built entirely in vanilla JavaScript usi
 ---
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow)
 ![Canvas](https://img.shields.io/badge/HTML5-Canvas-orange)
+![Css](https://img.shields.io/badge/CSS-vanilla-lightblue)
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 
 ---
