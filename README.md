@@ -1,2 +1,65 @@
 # Fablekins
-A 2D Game Engine build entierly over JavaScript!
+
+A lightweight 2D tile-based game engine built entirely in vanilla JavaScript using HTML5 Canvas.
+
+---
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow)
+![Canvas](https://img.shields.io/badge/HTML5-Canvas-orange)
+![Status](https://img.shields.io/badge/status-active-brightgreen)
+
+---
+
+## *Live Demo*
+🔗 https://fablekins.vercel.app
+
+---
+
+## ✨ Features
+- Tile-based grid movement (16px system)
+- Sprite animation system
+- Layered rendering (background → entities → foreground)
+- Collision system
+- Level scaling (ghost speed increases per level)
+- Modular architecture
+
+---
+
+## 🏗 Architecture Overview
+The engine follows a layered structure:
+
+init → Overworld → Map → GameObjects → Sprite.draw()
+
+Core components:
+- **GameObject** – Base entity abstraction
+- **Person** – Movement + input control
+- **Sprite** – Rendering abstraction
+- **OverworldMap** – Map layers and object placement
+- **DirectionInput** – Input handling system
+
+---
+
+## 🎨 Rendering Order
+1. Background layer
+2. Dynamic entities
+3. Foreground overlay
+
+---
+
+## 🧠 Technical Highlights
+- Frame-rate normalized movement system
+- Sprite sheet animation controller
+- Modular file responsibility separation
+- Scalable difficulty logic
+- Real-time canvas rendering loop
+
+---
+
+## 📦 Tech Stack
+- JavaScript (Vanilla)
+- HTML5 Canvas
+- CSS
+
+---
+
+## 🌱 Why This Project?
+This project was built to understand the fundamentals of game engine architecture, rendering pipelines, and real-time systems without relying on external frameworks.
