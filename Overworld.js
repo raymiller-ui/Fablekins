@@ -1,58 +1,58 @@
 class Overworld {
- constructor(config) {
-   this.element = config.element;
-   this.canvas = this.element.querySelector(".game-canvas");
-   this.ctx = this.canvas.getContext("2d");
-   this.map = null; // Initialization pe define karenge isko
- }
-
-
- drawHUD() {
-  this.ctx.save();
-
-  this.ctx.fillStyle = "red";
-  this.ctx.font = "12px monospace";
-  this.ctx.textAlign = "right";
-
-  this.ctx.fillText(
-    `${this.map.dotsCollected} / ${this.map.totalDots}`,
-    this.canvas.width - 8,
-    14
-  );
-
-  if (this.map.dotsCollected === this.map.totalDots) {
-    this.ctx.fillStyle = "lime";
-    this.ctx.font = "20px monospace";
-    this.ctx.textAlign = "center";
-
-    this.ctx.fillText(
-      "YOU WON!",
-      this.canvas.width / 2,
-      this.canvas.height / 2
-    );
+  constructor(config) {
+    this.element = config.element;
+    this.canvas = this.element.querySelector(".game-canvas");
+    this.ctx = this.canvas.getContext("2d");
+    this.map = null; // Initialization pe define karenge isko
   }
 
-  this.ctx.restore();
-}
+
+  drawHUD() {
+    this.ctx.save();
+
+    this.ctx.fillStyle = "red";
+    this.ctx.font = "12px monospace";
+    this.ctx.textAlign = "right";
+
+    this.ctx.fillText(
+      `${this.map.dotsCollected} / ${this.map.totalDots}`,
+      this.canvas.width - 8,
+      14
+    );
+
+    if (this.map.dotsCollected === this.map.totalDots) {
+      this.ctx.fillStyle = "lime";
+      this.ctx.font = "20px monospace";
+      this.ctx.textAlign = "center";
+
+      this.ctx.fillText(
+        "YOU WON!",
+        this.canvas.width / 2,
+        this.canvas.height / 2
+      );
+    }
+
+    this.ctx.restore();
+  }
 
 
   //Defining the game Loop
 
   startGameLoop() {
     let lastTime = performance.now();
-  
+
     const step = (currentTime) => {
       const deltaTime = (currentTime - lastTime) / 1000; // seconds
       lastTime = currentTime;
-  
+
       // Clear canvas
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-  
+
       const CameraPerson = this.map.gameObjects.hero;
-  
+
       // Draw lower map
       this.map.drawLowerImg(this.ctx, CameraPerson);
-  
+
       // Update game objects (time-aware)
       Object.values(this.map.gameObjects).forEach(obj => {
         obj.update({
@@ -61,7 +61,7 @@ class Overworld {
           deltaTime,
         });
       });
-  
+
       // Draw sprites
       Object.values(this.map.gameObjects).forEach(obj => {
         if (obj.sprite) {
@@ -70,7 +70,7 @@ class Overworld {
         if (obj.draw) {
           obj.draw(this.ctx, CameraPerson);
         }
-        
+
       });
 
       this.map.activateGhostOnce();
@@ -80,13 +80,13 @@ class Overworld {
 
       this.drawHUD();
 
-  
+
       requestAnimationFrame(step);
     };
-  
+
     requestAnimationFrame(step);
   }
-  
+
 
   //Starting the init ()
 
@@ -95,13 +95,13 @@ class Overworld {
     this.map = new OverworldMap(window.OverworldMaps.NorthStreet);
     //console.log(this.map.walls);
 
-   // Removing the touch controls for pc players
+    // Removing the touch controls for pc players
     //console.log(window.matchMedia("(any-hover: hover)").matches);
     //console.log(window.matchMedia("(any-pointer: fine)").matches);
 
     if (window.matchMedia("(any-pointer: fine)").matches) {
-        document.querySelector(".touch-controls").style.display = "none";
-      }
+      document.querySelector(".touch-controls").style.display = "none";
+    }
 
     this.DirectionInput = new DirectionInput();
     this.DirectionInput.init();
@@ -110,33 +110,33 @@ class Overworld {
     this.map.spawnDot();
     updateDotCounter(0, this.map.totalDots);
 
-    
 
-  //---------------------------[OLD CODE -> HARDCODED]--------------------------------------//
 
-  //-----------------------------------------------Background Image 
+    //---------------------------[OLD CODE -> HARDCODED]--------------------------------------//
 
-  // const image = new Image();
-  // image.onload = () => {
-  //   this.ctx.drawImage(image,0,0)
-  // };
-  // image.src = "/images/maps/DemoLower.png";
+    //-----------------------------------------------Background Image 
 
-  //-----------------------------------------------Place some game objects
+    // const image = new Image();
+    // image.onload = () => {
+    //   this.ctx.drawImage(image,0,0)
+    // };
+    // image.src = "/images/maps/DemoLower.png";
 
-  // const hero = new GameObject({
-  // x:5,
-  // y:6,
-  // useShadow:true,
-  // })
+    //-----------------------------------------------Place some game objects
 
-  // const npc1 = new GameObject({
-  // x:7,
-  // y:8,
-  // src:"/images/characters/people/npc1.png",
-  // })
+    // const hero = new GameObject({
+    // x:5,
+    // y:6,
+    // useShadow:true,
+    // })
 
-  //-----------------------------------------------Drawing these Game Objects
+    // const npc1 = new GameObject({
+    // x:7,
+    // y:8,
+    // src:"/images/characters/people/npc1.png",
+    // })
 
- }
+    //-----------------------------------------------Drawing these Game Objects
+
+  }
 }
