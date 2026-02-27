@@ -54,6 +54,12 @@ body {
   font-size: 20px;
   opacity: 0.4;
   border-radius: 10px;
+
+  /* prevent button text selection */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 /* Grid placement */
