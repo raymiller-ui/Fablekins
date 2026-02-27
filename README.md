@@ -4,7 +4,9 @@
 ![Canvas](https://img.shields.io/badge/HTML5-Canvas-orange)
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 
-## 🚀 Live Demo
+---
+
+## *Live Demo*
 🔗 https://fablekins.vercel.app
 
 ---
