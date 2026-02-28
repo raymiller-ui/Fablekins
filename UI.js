@@ -29,12 +29,12 @@ class InstructionsScreen {
 
         // Instructions
         const lines = [
-            "👻  Avoid the ghost",
+            "⚫  Avoid the ghost",
             "🔴  Collect dots to level up",
             "⚡  Golden dot = speed boost, nerf ghost",
             "←↑↓→  Move with arrow keys",
         ];
-        c.font = "10px 'Courier New'";
+        c.font = "13px 'Courier New'";
         c.fillStyle = "#b39ddb";
         lines.forEach((txt, i) => c.fillText(txt, W / 2, 65 + i * 22));
 
