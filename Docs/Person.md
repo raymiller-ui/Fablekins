@@ -1,60 +1,122 @@
-# Person.js
+# Person
 
-## Purpose
-A movable entity that exists on the map—can be the player or an NPC.
+**File:** `Person.js`  
+**Extends:** `GameObject`  
+**Used for:** Player hero (and optionally NPCs)
 
-Extends `GameObject`.
+---
 
-## Exports
-- `class Person`
+## Overview
 
-## Used By
-- `OverworldMap` (instantiates hero & NPCs)
-- `Overworld` (calls update + sprite.draw)
+`Person` adds tile-based movement, wall collision, and sprite animation logic on top of `GameObject`. Movement happens one tile (16 px) at a time and is interpolated smoothly using `deltaTime` to stay frame-rate independent.
 
-## Depends On
-- `GameObject` (base class)
-- `DirectionInput` indirectly (via state.pressedKey passed from Overworld)
+---
 
-## Core Responsibilities
-- Handle movement over time rather than instant jumps
-- Consume movement input if `isPlayerControlled === true`
-- Move using tile-based 16-step increments
+## Constructor
 
-## Key Properties
+```js
+new Person(config)
+```
 
-| Property | Purpose |
-|----------|---------|
-| `remainingMovement` | How many movement steps remain this move |
-| `isPlayerControlled` | Whether this instance should respond to keyboard input |
-| `directionUpdate` | Maps direction to (`axis`, `delta`) |
+Inherits all `GameObject` config properties, plus:
 
-## Movement Details
-Movement occurs over **16 frames per tile**, based on direction:
+| Config Property | Type | Default | Description |
+|----------------|------|---------|-------------|
+| `isPlayerControlled` | `boolean` | `false` | If `true`, reads input from `DirectionInput` each frame |
 
-update() → updatePosition() → remainingMovement-- until 0
+---
 
-Example:
+## Properties
 
-- direction = "left"
+| Property | Type | Description |
+|----------|------|-------------|
+| `remainingMovement` | `number` | Pixels left to travel to reach the next tile (0 = idle) |
+| `isPlayerControlled` | `boolean` | Whether this Person is driven by keyboard/touch input |
+| `baseSpeed` | `number` | Base movement speed (px/s), default `144` |
+| `speed` | `number` | Current movement speed (px/s); can be boosted by `PowerDot` |
+| `targetX` | `number` | Target world X position (set when a walk starts) |
+| `targetY` | `number` | Target world Y position (set when a walk starts) |
+| `directionUpdate` | `object` | Maps direction strings to `[axis, change]` pairs |
 
-- remainingMovement = 16
+---
 
-- loop: x -= 1
+## Methods
 
-- remainingMovement -= 1
+### `update(state)`
 
+The main per-frame method. Orchestrates the three sub-steps below.
 
-## Input Flow (Player Only)
+```js
+// state = { pressedKey: string|undefined, map: OverworldMap, deltaTime: number }
+person.update(state);
+```
 
-DirectionInput → Overworld → Person.update(state) → movement logic
+**Logic:**
+1. If `remainingMovement > 0` → call `updatePosition(deltaTime)`
+2. Always call `updateSprite(state)` to set the correct animation
+3. If player-controlled AND idle AND a key is pressed → call `startBehaviour(state, { type: "walk", direction })`
+
+---
+
+### `startBehaviour(state, behaviour)`
+
+Initiates a single tile move in a given direction.
+
+```js
+this.startBehaviour(state, { type: "walk", direction: "right" });
+```
+
+- Sets `this.direction` to the new direction
+- Checks `state.map.walls` for the upcoming tile — if blocked, returns immediately (no movement)
+- If clear: sets `remainingMovement = 16`, `targetX`, `targetY`
+
+---
+
+### `updatePosition(deltaTime)`
+
+Advances the person towards `targetX` / `targetY` by `speed * deltaTime` pixels, capped at `remainingMovement`.
+
+When `remainingMovement` reaches 0 the position is **snapped exactly** to the tile to prevent floating-point drift.
+
+---
+
+### `updateSprite(state)`
+
+Picks the correct animation key for the current state:
+
+| State | Animation Set |
+|-------|--------------|
+| Player-controlled, idle, no key held | `"idle-<direction>"` |
+| Moving (`remainingMovement > 0`) | `"walk-<direction>"` |
+
+Also adjusts `sprite.animationSpeed` based on `speed / baseSpeed` so faster movement plays the walk cycle faster:
+
+```js
+this.sprite.animationSpeed = Math.max(4, Math.round(16 / speedRatio));
+```
+
+---
+
+## Movement Flow
+
+```
+pressedKey received
+    ↓
+startBehaviour() — wall check
+    ↓ (clear tile)
+remainingMovement = 16
+    ↓
+updatePosition() runs each frame
+    ↓ (remainingMovement == 0)
+snap to targetX / targetY
+    ↓
+ready for next input
+```
+
+---
 
 ## Notes
-- No animation switching yet (uses static sprite frame)
-- Movement speed is fixed; no delta-time scaling yet
 
-## Future Enhancements
-- Animation states (walk, idle, interact)
-- Collision checking before movement
-- AI movement for NPCs
-- Movement queue (smooth chained movement)
+- NPCs can be created by setting `isPlayerControlled: false`; they will not read from `DirectionInput` but can be driven programmatically via `startBehaviour()`.
+- `speed` is intentionally exposed so `PowerDot` can boost it at runtime.
+- `baseSpeed` is kept in sync with `speed` by `PowerDot` so that `updateSprite`'s animation-speed ratio stays correct.

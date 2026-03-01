@@ -1,21 +1,45 @@
-# init.js
+# init
 
-## Purpose
-Entry point of the game. Creates an Overworld instance and starts execution.
+**File:** `init.js`
 
-## Used By
-- Browser (loaded at bottom of index.html)
+---
 
-## Responsibilities
-- Select `.game-container`
-- Create Overworld instance
-- Call `.init()`
+## Overview
+
+`init.js` is the single entry point that boots the Fablekins engine. It is the last script loaded by `index.html`.
+
+---
+
+## Implementation
+
+```js
+(() => {
+  const overworld = new Overworld({
+    element: document.querySelector(".game-container"),
+  });
+  overworld.init();
+})();
+```
+
+It uses an **IIFE** (Immediately Invoked Function Expression) to:
+
+- Avoid polluting the global scope with the `overworld` variable
+- Ensure the code runs as soon as the script is parsed (all prior scripts are already loaded)
+
+---
+
+## What It Does
+
+1. Finds the `.game-container` div in the DOM
+2. Creates a new `Overworld` instance, passing the container element
+3. Calls `overworld.init()`, which:
+   - Loads the map (`window.OverworldMaps.NorthStreet`)
+   - Draws the `InstructionsScreen`
+   - Waits for player to click PROCEED before starting the game loop
+
+---
 
 ## Notes
-- Wrapped in an IIFE to avoid polluting global scope
-- Could be replaced by ES module import once bundling is used
 
-## Future Enhancements
-- Load save data before starting
-- Load assets before Overworld initialization
-- Scene selection screen
+- No ES module syntax is used. All class definitions must be resolved from prior `<script>` tags before `init.js` runs.
+- The file has no exports and no imports — it exists solely to trigger the startup sequence.

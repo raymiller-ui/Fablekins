@@ -124,9 +124,11 @@ class OverworldMap {
   }
 
   playerDied() {
-    alert("YOU DIED");
-    location.reload();
+    this.youDied = true;
+    // Freeze the ghost
+    if (this.gameObjects.ghost) this.gameObjects.ghost.isActive = false;
   }
+
 
 }
 
